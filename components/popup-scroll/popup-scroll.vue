@@ -1,5 +1,5 @@
 <template>
-	<view class="slide-scroll" @touchstart.stop.prevent="touchStart($event)" @touchend.stop.prevent="touchEnd($event)" @touchmove.stop.prevent="touchMove($event)">
+	<view class="slide-scroll" @touchstart="touchStart($event)" @touchend="touchEnd($event)" @touchmove.stop.prevent="touchMove($event)">
 		<view class="slide-scroll-box" :style="{ transform: 'translate3d(0, ' + scrollY + 'px,  0)' }">
 			<slot />
 		</view>
