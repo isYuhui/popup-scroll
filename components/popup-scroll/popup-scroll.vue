@@ -1,5 +1,5 @@
 <template>
-	<view class="slide-scroll" @touchstart="touchStart($event)" @touchend="touchEnd($event)" @touchmove.stop.prevent="touchMove($event)">
+	<view class="slide-scroll" :id="scrollId" @touchstart="touchStart($event)" @touchend="touchEnd($event)" @touchmove.stop.prevent="touchMove($event)">
 		<view class="slide-scroll-box" :style="{ transform: 'translate3d(0, ' + scrollY + 'px,  0)' }">
 			<slot />
 		</view>
@@ -28,6 +28,7 @@
 		},
 		data() {
 			return {
+				scrollId: "scroll-" + Math.random().toString().replace(".","").substr(0, 8),
 				boxHeight: 0, // 可视区域高度
 				boxTop: 0, // 
 				boxBottom: 0, // 
@@ -47,45 +48,25 @@
 			touchStart(e) {
 				this.status = "start"
 				clearInterval(timely)
+				const selector = uni.createSelectorQuery()
 				//#ifdef MP-WEIXIN
-				uni.createSelectorQuery().in(this).selectAll('.slide-scroll').boundingClientRect(res => {
+					.in(this)
+				//#endif
+				selector.select("#" + this.scrollId).boundingClientRect(res => {
 					if (res != null) {
-						this.boxHeight = res[0].height
-						this.boxBottom = res[0].bottom
-						this.boxTop = res[0].top
+						this.boxHeight = res.height
+						this.boxBottom = res.bottom
+						this.boxTop = res.top
 					}
-				}).exec();
+				})
 
-				uni.createSelectorQuery().in(this).selectAll('.slide-scroll-box').boundingClientRect(res => {
+				selector.select(`#${this.scrollId} .slide-scroll-box`).boundingClientRect(res => {
 					if (res != null) {
-						this.scrollHeight = res[0].height
-						this.scrollBottom = res[0].bottom
-						this.scrollTop = res[0].top
+						this.scrollHeight = res.height
+						this.scrollBottom = res.bottom
+						this.scrollTop = res.top
 					}
 				}).exec();
-				//#endif
-				//#ifdef H5 || APP-PLUS
-				uni.createSelectorQuery()
-					.selectAll('.slide-scroll')
-					.boundingClientRect()
-					.exec(res => {
-						if (res[0] != null) {
-							this.boxHeight = res[0][0].height
-							this.boxBottom = res[0][0].bottom
-							this.boxTop = res[0][0].top
-						}
-					});
-				uni.createSelectorQuery()
-					.selectAll('.slide-scroll-box')
-					.boundingClientRect()
-					.exec(res => {
-						if (res[0] != null) {
-							this.scrollHeight = res[0][0].height
-							this.scrollBottom = res[0][0].bottom
-							this.scrollTop = res[0][0].top
-						}
-					});
-				//#endif
 				// 记录手指所处位置
 				if (e) {
 					this.startY = e.touches[0].pageY;
