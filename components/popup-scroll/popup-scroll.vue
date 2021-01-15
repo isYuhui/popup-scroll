@@ -16,7 +16,7 @@
 		},
 		computed: {
 			maxScrollY() {
-				return this.scrollHeight - this.boxHeight
+				return Math.max(this.scrollHeight - this.boxHeight, 0)
 			},
 			isOut(){
 				let maxScrollY = this.maxScrollY
